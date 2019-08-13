@@ -99,6 +99,22 @@ func extract_root(heap []int, operator func(int, int) bool) ([]int, int) {
 	return heap, return_item
 }
 
+func min_heap_insert(heap []int, item int) []int {
+	return heap_insert(heap, item, min)
+}
+
+func max_heap_insert(heap []int, item int) []int {
+	return heap_insert(heap, item, max)
+}
+
+func min_extract_root(heap []int) ([]int, int) {
+	return extract_root(heap, min)
+}
+
+func max_extract_root(heap []int) ([]int, int) {
+	return extract_root(heap, max)
+}
+
 func main() {
 
 	a := getarray("course_2_p_3.txt")
@@ -111,19 +127,19 @@ func main() {
 
 	for i := 0; i < 10000; i++ {
 		if i == 0 {
-			lowheap = heap_insert(lowheap, a[0], max)
+			lowheap = max_heap_insert(lowheap, a[0])
 		} else if a[i] <= lowheap[0] { // should go into low heap, root is max
-			lowheap = heap_insert(lowheap, a[i], max)
+			lowheap = max_heap_insert(lowheap, a[i])
 			// resolve imbalancing
 			if len(lowheap)-len(highheap) == 2 {
-				lowheap, e = extract_root(lowheap, max)
-				highheap = heap_insert(highheap, e, min)
+				lowheap, e = max_extract_root(lowheap)
+				highheap = min_heap_insert(highheap, e)
 			}
 		} else {
-			highheap = heap_insert(highheap, a[i], min)
+			highheap = min_heap_insert(highheap, a[i])
 			if len(highheap)-len(lowheap) == 2 {
-				highheap, e = extract_root(highheap, min) // this violates high!
-				lowheap = heap_insert(lowheap, e, max)
+				highheap, e = min_extract_root(highheap)
+				lowheap = max_heap_insert(lowheap, e)
 			}
 		}
 		if len(lowheap)-len(highheap) > 1 || len(highheap)-len(lowheap) > 1 {
