@@ -1,59 +1,14 @@
 package main
 
 import (
-	"container/heap"
+	"courseraalg/heap"
 	"fmt"
 	"io/ioutil"
 	"strconv"
 	"strings"
 )
 
-// An Vertex is something we manage in a priority queue.
-type Vertex struct {
-	index    int // The index of the item in the heap.
-	nodeid   int // The value of the item; arbitrary.
-	priority int // The priority of the item in the queue.
-	// The index is needed by update and is maintained by the heap.Interface methods.
-}
-
-// A PriorityQueue implements heap.Interface and holds Vertexs.
-type PriorityQueue []*Vertex
-
-func (pq PriorityQueue) Len() int { return len(pq) }
-
-func (pq PriorityQueue) Less(i, j int) bool {
-	return pq[i].priority < pq[j].priority
-}
-
-func (pq PriorityQueue) Swap(i, j int) {
-	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].index = i
-	pq[j].index = j
-}
-
-func (pq *PriorityQueue) Push(x interface{}) {
-	n := len(*pq)
-	item := x.(*Vertex)
-	item.index = n
-	*pq = append(*pq, item)
-}
-
-func (pq *PriorityQueue) Pop() interface{} {
-	old := *pq
-	n := len(old)
-	item := old[n-1]
-	item.index = -1 // for safety
-	*pq = old[0 : n-1]
-	return item
-}
-
-// update modifies the priority and value of an Vertex in the queue.
-func (pq *PriorityQueue) update(item *Vertex, priority int) {
-	item.priority = priority
-	heap.Fix(pq, item.index)
-}
-
-func getE(fname string) ([200][][2]int, PriorityQueue) {
+func getE(fname string) ([200][][2]int, heap.PriorityQueue) {
 
 	b, _ := ioutil.ReadFile(fname)
 
@@ -96,11 +51,11 @@ func getE(fname string) ([200][][2]int, PriorityQueue) {
 			}
 		}
 	}
-	pq := make(PriorityQueue, 200)
+	pq := make(heap.PriorityQueue, 200)
 	for i := 0; i < 200; i++ {
-		pq[i] = &Vertex{i, i, best_from_s[i]}
+		pq[i] = &heap.Vertex{i, i, best_from_s[i]}
 	}
-	heap.Init(&pq)
+	pq.HInit()
 
 	return edges_outgoing, pq
 
@@ -112,20 +67,20 @@ func main() {
 	var A [200]int
 
 	for pq.Len() > 0 {
-		v := heap.Pop(&pq).(*Vertex)
-		A[v.nodeid] = v.priority
+		v := pq.HPop().(*heap.Vertex)
+		A[v.Nodeid] = v.Priority
 
 		// check whether v -> E is a better path to E for all E leaving V
-		for _, o := range edges_outgoing[v.nodeid] {
+		for _, o := range edges_outgoing[v.Nodeid] {
 
 			end := o[0]
 			length := o[1]
 
 			// find the item; TODO, IS THERE A BETTER WAY TO DO THIS???
 			for i := range pq {
-				if pq[i].nodeid == end { // we found the node in the heap, now check it
-					if A[v.nodeid]+length < pq[i].priority { // we have a better path
-						pq.update(pq[i], A[v.nodeid]+length)
+				if pq[i].Nodeid == end { // we found the node in the heap, now check it
+					if A[v.Nodeid]+length < pq[i].Priority { // we have a better path
+						pq.Update(pq[i], A[v.Nodeid]+length)
 					}
 				}
 			}
