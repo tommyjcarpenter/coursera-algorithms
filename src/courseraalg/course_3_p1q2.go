@@ -47,7 +47,7 @@ func main() {
 
 	for pq.Len() > 0 {
 
-		v := pq.HPop().(*heap.Vertexf)
+		v := pq.ExtractMax().(*heap.Vertexf)
 		curr_completion_time += v.Length
 		sum += curr_completion_time * v.Weight
 	}

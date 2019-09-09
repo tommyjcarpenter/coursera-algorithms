@@ -77,12 +77,12 @@ func main() {
 	final_mst_edge_lengths := make([]int, 0)
 
 	//pop node 0
-	v := pq.HPop().(*heap.Vertex)
+	v := pq.ExtractMin().(*heap.Vertex)
 	fmt.Println(v)
 
 	for pq.Len() > 0 {
 
-		v := pq.HPop().(*heap.Vertex)                                       // pop the node
+		v := pq.ExtractMin().(*heap.Vertex)                                 // pop the node
 		already_checked[v.Nodeid] = true                                    // mark as checked
 		final_mst_edge_lengths = append(final_mst_edge_lengths, v.Priority) // append edge
 

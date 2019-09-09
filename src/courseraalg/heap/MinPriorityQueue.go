@@ -36,7 +36,7 @@ func (pq *PriorityQueue) Pop() interface{} {
 	return item
 }
 
-func (pq *PriorityQueue) HPop() interface{} {
+func (pq *PriorityQueue) ExtractMin() interface{} {
 	return heap.Pop(pq)
 }
 
